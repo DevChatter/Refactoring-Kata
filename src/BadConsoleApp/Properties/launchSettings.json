@@ -1,0 +1,8 @@
+{
+  "profiles": {
+    "BadConsoleApp": {
+      "commandName": "Project",
+      "commandLineArgs": "Milk Pizza"
+    }
+  }
+}
