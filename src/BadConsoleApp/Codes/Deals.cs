@@ -2,6 +2,9 @@
 {
     public class Deals
     {
+        public Deals()
+        {
 
+        }
     }
 }

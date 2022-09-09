@@ -1,6 +1,9 @@
-﻿using System;
+﻿using BadConsoleApp.Codes;
+using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
+using static BadConsoleApp.Data.Items;
 using Discounts = BadConsoleApp.Codes.Deals;
 
 namespace BadConsoleApp
@@ -14,6 +17,8 @@ namespace BadConsoleApp
     {
         static void Main(string[] args)
         {
+            // TODO:
+
             // TODO: Feature request for an extra discount.
             // TODO: Use _discounts.Count instead of the number 7, because why would we have a magic number when there will always be 7 deals.
             // TODO: we need a while(true) somewhere
@@ -30,20 +35,27 @@ namespace BadConsoleApp
 
             Console.WriteLine("Processing Items!");
 
+            // get items
+            var shopping = items();
+            Shopping item = new(); // make a shopping
+            // get shelf by Name
+            Item[] shelf = shopping.Select(x => x).OrderBy(x => x.Name).ToArray();
+            item.LoadProducts(shelf); // Load Products
+
             // Loop over the hsopping ietms
             for (var a = args.Length - 1; a >= 0; a--)
             {
                 // Use for loop for speed
-                for (double b = 0; b < Shopping.Items.Count; b++)
+                for (decimal b = 0; b < Shopping.Shelf.Count; b++)
                 {
                     // compare two varbiales
-                    if (Shopping.Items[(int)b] == args[a])
+                    if (Shopping.Shelf[(int)b] == args[a])
                     {
                         StringBuilder sb = new StringBuilder();
-                        sb.Append(Shopping.Items[(int)b].Name);
+                        sb.Append(Shopping.Shelf[(int)b].Name);
                         sb.Append(":");
                         sb.Append(" ");
-                        b = Shopping.Items[(int)b].Cost;
+                        b = Shopping.Shelf[(int)b].Moola;
                         sb.Append(b);
                         Console.WriteLine(sb.ToString());
                         break;
@@ -84,25 +96,83 @@ namespace BadConsoleApp
 
     public class Shopping
     {
-        public static bool operator ==(Shopping a, string b) => a?.Name == b;
+        private int N => _n ??= Convert.ToInt32(_nString); // M for MT
+        private int M => _m ??= Constants.n; // M for MT
+        public static List<Item> Shelf;
 
-        public static bool operator !=(Shopping a, string b) => a?.Name != b;
-
-        public Shopping(string name, double price)
+        public void Add(Item it)
         {
-            Name = name;
-            Cost = price;
+            Shelf ??= new List<Item>();
+            Shelf.Add(it);
         }
 
-        public string Name { get; set; }
-        public double Cost { get; set; }
-
-        public static List<Shopping> Items = new List<Shopping>
+        public void LoadProducts(Item[] items)
         {
-            new Shopping("Bruschetta Toast Crunch", 3.37),
-            new Shopping("Pizza Crunch Cereal", 2.09),
-            new Shopping("Milk", 5.37), // No one will ever sell anything, but a gallon. Who needs halfs?
-            new Shopping("Pizza", 1.42),
-        };
+            Shelf ??= new List<Item>();
+            if (Shelf != null)
+            {
+                Add(LoadProduct(items));
+            }
+        }
+
+        // TODO: Figure out why this didn't wrok
+        //private Item LoadProduct(Item[] items)
+        //{
+        //    if (items.Length == M)
+        //    {
+        //        throw new NotImplementedException();
+        //    }
+        //    else if (items.Length != M)
+        //    {
+        //        if (items.Length == N)
+        //        {
+        //            return items[0..N][M];
+        //        }
+        //        else if (items.Length > N)
+        //        {
+        //            var i = items[^items.Length];
+        //            var j = items[N..];
+        //            Shelf ??= new List<Item>();
+        //            if (Shelf != null)
+        //            {
+        //                Shelf.Add(LoadProduct(j));
+        //            }
+        //            return i;
+        //        }
+        //    }
+        //    throw new ArgumentOutOfRangeException();
+        //}
+
+
+        private Item LoadProduct(Item[] items)
+        {
+            if (items.Length == M)
+            {
+                throw new NotImplementedException();
+            }
+            else if (items.Length != M)
+            {
+                if (items.Length == N)
+                {
+                    return items[0..N][M];
+                }
+                else if (items.Length > N)
+                {
+                    var i = items[^items.Length];
+                    var j = items[N..];
+                    Shelf ??= new List<Item>();
+                    if (Shelf != null)
+                    {
+                        Add(LoadProduct(j));
+                    }
+                    return i;
+                }
+            }
+            throw new ArgumentOutOfRangeException();
+        }
+
+        private int? _m;
+        private int? _n;
+        private string _nString = Constants.m;
     }
 }
